@@ -29,6 +29,12 @@ public class Projeto implements Serializable {
     
     // Lista de equipes alocadas no projeto
     private List<Equipe> equipes;
+    
+    // Lista de tasks do projeto
+    private List<Task> tasks;
+    
+    // Contador de IDs para tasks
+    private int proximoIdTask;
 
     public Projeto(int id, String nomeProjeto, String descricao, String dataInicio,
                    String dataTerminoPrevista, StatusProjeto status, Usuario gerenteResponsavel) {
@@ -40,6 +46,8 @@ public class Projeto implements Serializable {
         this.status = status;
         this.gerenteResponsavel = gerenteResponsavel;
         this.equipes = new ArrayList<>();
+        this.tasks = new ArrayList<>();
+        this.proximoIdTask = 1;
     }
 
     public int getId() { 
@@ -88,6 +96,18 @@ public class Projeto implements Serializable {
     
     public List<Equipe> getEquipes() { 
         return equipes; 
+    }
+    
+    public List<Task> getTasks() { 
+        return tasks; 
+    }
+    
+    public int getProximoIdTask() { 
+        return proximoIdTask; 
+    }
+    
+    public void incrementarIdTask() { 
+        this.proximoIdTask++; 
     }
 }
 
