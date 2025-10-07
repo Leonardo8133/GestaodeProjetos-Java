@@ -1,11 +1,12 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 
 /**
  * Classe que representa uma equipe
  * Uma equipe é composta por vários usuários (membros)
  */
-public class Equipe {
+public class Equipe implements Serializable {
     private int id;
     
     // Nome da equipe

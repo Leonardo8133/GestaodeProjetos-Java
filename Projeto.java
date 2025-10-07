@@ -1,11 +1,12 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 
 /**
  * Classe que representa um projeto no sistema
  * Um projeto possui informações básicas, status e um gerente responsável
  */
-public class Projeto {
+public class Projeto implements Serializable {
     private int id;
     
     // Nome do projeto

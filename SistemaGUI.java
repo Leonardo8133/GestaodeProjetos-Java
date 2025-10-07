@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,9 @@ public class SistemaGUI extends JFrame {
         // Centraliza a janela na tela
         setLocationRelativeTo(null);
         
+        // Carrega dados salvos
+        carregarDados();
+        
         // Inicializa o cardLayout
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
@@ -37,6 +42,14 @@ public class SistemaGUI extends JFrame {
         mainPanel.add(criarPainelEquipes(), "EQUIPES");
         
         add(mainPanel);
+        
+        // Salva dados ao fechar a janela
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                salvarDados();
+            }
+        });
     }
     
     // Cria o menu principal
@@ -228,6 +241,7 @@ public class SistemaGUI extends JFrame {
             
             Usuario usuario = new Usuario(proximoIdUsuario++, nome, email, cargo, perfil);
             usuarios.add(usuario);
+            salvarDados();
             
             JOptionPane.showMessageDialog(this, "Usuario cadastrado com sucesso!");
         }
@@ -279,6 +293,7 @@ public class SistemaGUI extends JFrame {
                 status, gerente);
             
             projetos.add(projeto);
+            salvarDados();
             JOptionPane.showMessageDialog(this, "Projeto cadastrado com sucesso!");
         }
     }
@@ -299,6 +314,7 @@ public class SistemaGUI extends JFrame {
         if (option == JOptionPane.OK_OPTION) {
             Equipe equipe = new Equipe(proximoIdEquipe++, nomeField.getText(), descField.getText());
             equipes.add(equipe);
+            salvarDados();
             JOptionPane.showMessageDialog(this, "Equipe cadastrada com sucesso!");
         }
     }
@@ -346,6 +362,40 @@ public class SistemaGUI extends JFrame {
     // Busca usuário por ID
     private Usuario buscarUsuario(int id) {
         return usuarios.stream().filter(u -> u.getId() == id).findFirst().orElse(null);
+    }
+    
+    // Salva os dados em arquivo
+    private void salvarDados() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("dados.dat"))) {
+            oos.writeObject(usuarios);
+            oos.writeObject(projetos);
+            oos.writeObject(equipes);
+            oos.writeInt(proximoIdUsuario);
+            oos.writeInt(proximoIdProjeto);
+            oos.writeInt(proximoIdEquipe);
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar dados: " + e.getMessage());
+        }
+    }
+    
+    // Carrega os dados do arquivo
+    @SuppressWarnings("unchecked")
+    private void carregarDados() {
+        File arquivo = new File("dados.dat");
+        if (!arquivo.exists()) {
+            return;
+        }
+        
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(arquivo))) {
+            usuarios = (List<Usuario>) ois.readObject();
+            projetos = (List<Projeto>) ois.readObject();
+            equipes = (List<Equipe>) ois.readObject();
+            proximoIdUsuario = ois.readInt();
+            proximoIdProjeto = ois.readInt();
+            proximoIdEquipe = ois.readInt();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Erro ao carregar dados: " + e.getMessage());
+        }
     }
     
     public static void main(String[] args) {
